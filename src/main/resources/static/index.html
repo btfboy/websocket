@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>my websocket</title>
+</head>
+<body>
+Welcome!
+<hr/>
+<input id="text" type="text"/><button onclick="send()">send</button>
+&nbsp;
+<button onclick="closeweb()">close</button>
+<br/>
+<div id="mydiv">
+message!
+</div>
+
+</body>
+<script type="text/javascript">
+	var websocket=null;
+	
+	if('WebSocket' in window){
+		websocket=new WebSocket("ws://localhost:8080/websocket");
+	}else{
+		alert('Not support websocket');
+	}
+	
+	websocket.onerror=function(){
+		setMessageInnerHtml("error!");
+	}
+	
+	websocket.onopen=function(event){
+		setMessageInnerHtml("open");
+	}
+	websocket.onclose=function(){
+		setMessageInnerHtml("close");
+	}
+	websocket.onmessage=function(event){
+		setMessageInnerHtml(event.data);
+	}
+	window.onbeforeunload=function(){
+		websocket.close();
+	}
+	
+	function setMessageInnerHtml(innerHTML){
+		 document.getElementById('mydiv').innerHTML += innerHTML + '<br/>';
+		 document.getElementById('text').value="";
+	}
+	
+	function closeweb(){
+		websocket.close();
+	}
+	
+	function send(){
+		var msg=document.getElementById('text').value;
+		websocket.send(msg);
+	}
+	
+</script>
+</html>
